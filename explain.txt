@@ -1,0 +1,81 @@
+RL:
+ Prediction (estimate accurate values)
+ Control (find optimum policy)
+Dynamic Programming Algorithms
+ Policy Iteration
+ Value Iteration:
+	Initialize a table V of value estimates for each square with all zeroes
+	Loop over every possible state s
+		From state s loop over every possible action a
+			Get a list of all(probability, reward, s') transition tuples from state s, action a
+			Expected_reward = sum of all possible rewards multiplied by their probabilities
+			Expected_value = lookup V[s'] for each possible s', multiply by probability, sum
+			action_value = expected_reward + GAMMA * expected_value
+		Set V[s] to the best action_value found
+	Repeat steps 2-8 until the largest change in V[s] between iterations is below our threshold
+agent:
+	put everything together (game, model)
+	implement training loop
+	state = get_state(game)
+	action = get_move(state):
+		model.predict() (in deep Q learning)
+	reward, game_over, score = game.play_step(action)
+	new_state = get_state(game)
+	remember (remember every step that it knows from the start of the game)
+	model.train
+model:
+	get the newState, oldState
+	Linear_QNet(DQN)
+		model.predict(state) -> action
+game:
+	play_step(action) -> reward, game_over, score
+
+Reward: eat food: +10, game over (punishment): -10, else: 0
+Action: [1, 0, 0] -> straight
+	[0, 1, 0] -> right turn
+	[0, 0, 1] -> left turn
+	=> all of this depend on current direction
+State(11 values)
+[danger straight, danger right, danger left,
+direction left, direction right,
+direction up, direction down,
+food left, food right,
+food up, food down
+]
+
+Model: 
+	input layer: get State(11)
+	hidden layer: 
+	output layer: 3 value -> next Action -> this could be decimal number, but we use the highest value to assign 1 and others to 0
+
+Deep Q Learning:
+	Q value = Quality of action
+	- Init Q value(= init model)
+	- Choose action (model.predict(state)) -> or random move
+	- Perform action
+	- Measure reward
+	- Update Q value (+ train model) -> repeat between 1 to 4
+		Q Update Rule Simplified:
+			Q = model.predict(state0)
+			Qnew = R + gamma.max(Q(state1)) => if this happen remember to tell her about the game, agent, model image
+
+Lost function: loss = (Qnew - Q)^2 => mean squared error
+	Bellman: 
+		State
+		Action
+		Reward
+		Gamma (Discount)
+		NewQ(s,a) = Q(s,a) + A[R(s,a) + gamma.maxQ'(s', a') -Q(s,a)]
+eg: NewQ(s,a) = New Q value for that state and that action
+Q(s,a) = Current Q value
+A = Learning Rate
+R(s,a) = Reward for taking that action at that state
+
+maxQ'(s', a') = maximum expected future reward given the new s' and all possible actions at that new state
+
+
+reset
+reward
+play(action) -> direction
+game_iteration
+iscollision
